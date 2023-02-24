@@ -37,7 +37,7 @@ APBPlayerCharacter::APBPlayerCharacter(const FObjectInitializer& ObjectInitializ
 	// Camera eye level
 	DefaultBaseEyeHeight = 53.34f;
 	BaseEyeHeight = DefaultBaseEyeHeight;
-	const float CrouchedHalfHeight = 68.58f / 2.0f;
+	constexpr float CrouchedHalfHeight = 68.58f / 2.0f;
 	CrouchedEyeHeight = 53.34f - CrouchedHalfHeight;
 
 	// Fall Damage Initializations
@@ -337,7 +337,7 @@ void APBPlayerCharacter::RecalculateBaseEyeHeight()
 {
 	const ACharacter* DefaultCharacter = GetClass()->GetDefaultObject<ACharacter>();
 	const float OldUnscaledHalfHeight = DefaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	const float CrouchedHalfHeight = GetCharacterMovement()->CrouchedHalfHeight;
+	const float CrouchedHalfHeight = GetCharacterMovement()->GetCrouchedHalfHeight();
 	const float FullCrouchDiff = OldUnscaledHalfHeight - CrouchedHalfHeight;
 	const UCapsuleComponent* CharacterCapsule = GetCapsuleComponent();
 	const float CurrentUnscaledHalfHeight = CharacterCapsule->GetUnscaledCapsuleHalfHeight();

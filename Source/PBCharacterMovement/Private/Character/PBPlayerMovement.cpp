@@ -21,7 +21,7 @@ DECLARE_CYCLE_STAT(TEXT("Char StepUp"), STAT_CharStepUp, STATGROUP_Character);
 DECLARE_CYCLE_STAT(TEXT("Char PhysFalling"), STAT_CharPhysFalling, STATGROUP_Character);
 
 // MAGIC NUMBERS
-constexpr float JumpVelocity = 266.7f;
+const float JumpVelocity = 266.7f;
 const float MAX_STEP_SIDE_Z = 0.08f;			 // maximum z value for the normal on the vertical side of steps
 const float VERTICAL_SLOPE_NORMAL_Z = 0.001f;	 // Slope is vertical if Abs(Normal.Z) <= this threshold. Accounts for precision problems that sometimes angle
 												 // normals slightly off horizontal for vertical surface.
@@ -91,7 +91,8 @@ UPBPlayerMovement::UPBPlayerMovement()
 	// Start out braking
 	bBrakingFrameTolerated = true;
 	// Crouching
-	CrouchedHalfHeight = 34.29f;
+	// CrouchedHalfHeight = 34.29f;
+	SetCrouchedHalfHeight(34.29f);
 	MaxWalkSpeedCrouched = RunSpeed * 0.33333333f;
 	bCanWalkOffLedgesWhenCrouching = true;
 	CrouchTime = MOVEMENT_DEFAULT_CROUCHTIME;
@@ -1383,7 +1384,7 @@ void UPBPlayerMovement::DoCrouchResize(float TargetTime, float DeltaTime, bool b
 
 	// See if collision is already at desired size.
 	UCapsuleComponent* CharacterCapsule = CharacterOwner->GetCapsuleComponent();
-	if (FMath::IsNearlyEqual(CharacterCapsule->GetUnscaledCapsuleHalfHeight(), CrouchedHalfHeight))
+	if (FMath::IsNearlyEqual(CharacterCapsule->GetUnscaledCapsuleHalfHeight(), GetCrouchedHalfHeight()))
 	{
 		if (!bClientSimulation)
 		{
@@ -1407,11 +1408,11 @@ void UPBPlayerMovement::DoCrouchResize(float TargetTime, float DeltaTime, bool b
 	const float ComponentScale = CharacterCapsule->GetShapeScale();
 	const float OldUnscaledHalfHeight = DefaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	const float OldUnscaledRadius = CharacterCapsule->GetUnscaledCapsuleRadius();
-	const float FullCrouchDiff = OldUnscaledHalfHeight - CrouchedHalfHeight;
+	const float FullCrouchDiff = OldUnscaledHalfHeight - GetCrouchedHalfHeight();
 	const float CurrentUnscaledHalfHeight = CharacterCapsule->GetUnscaledCapsuleHalfHeight();
 	// Determine the crouching progress
 	const bool bInstantCrouch = FMath::IsNearlyZero(TargetTime);
-	const float CurrentAlpha = 1.0f - (CurrentUnscaledHalfHeight - CrouchedHalfHeight) / FullCrouchDiff;
+	const float CurrentAlpha = 1.0f - (CurrentUnscaledHalfHeight - GetCrouchedHalfHeight()) / FullCrouchDiff;
 	// Determine how much we are progressing this tick
 	float TargetAlphaDiff = 1.0f;
 	float TargetAlpha = 1.0f;
@@ -1511,7 +1512,7 @@ void UPBPlayerMovement::DoUnCrouchResize(float TargetTime, float DeltaTime, bool
 	const float ComponentScale = CharacterCapsule->GetShapeScale();
 	const float OldUnscaledHalfHeight = CharacterCapsule->GetUnscaledCapsuleHalfHeight();
 	const float UncrouchedHeight = DefaultCharacter->GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
-	const float FullCrouchDiff = UncrouchedHeight - CrouchedHalfHeight;
+	const float FullCrouchDiff = UncrouchedHeight - GetCrouchedHalfHeight();
 	// Determine the crouching progress
 	const bool InstantCrouch = FMath::IsNearlyZero(TargetTime);
 	float CurrentAlpha = 1.0f - (UncrouchedHeight - OldUnscaledHalfHeight) / FullCrouchDiff;
